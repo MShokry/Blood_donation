@@ -51,7 +51,6 @@ X_index = data_t.loc[:,'id'].values
 plt.style.use("seaborn-white") 
 #plt.(data['months_donated'], data['donate'].astype(bool)).plot(kind='bar')
 
-
 #Scaling Data
 scaler = StandardScaler() 
 scaler.fit(X)
