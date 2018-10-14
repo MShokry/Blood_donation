@@ -34,7 +34,10 @@ target = ['donate']
 data.rename(columns=col_names,inplace=True)
 #New Feature
 data['months_donated'] = data['months_since_first'] - data['months_since_last']
-#data['per_moth'] = data['total_volume'] / data['months_donated'] if data['months_donated'] != 0  else 0.0
+data['per_moth'] = data['total_volume']
+for i in range(len(data['total_volume'])):
+    data['per_moth'][i] = data['total_volume'][i] / data['months_donated'][i] if data['months_donated'][i] != 0 else 0.0
+
 
 X = data.loc[:,features].values
 y = data.loc[:,target].values
@@ -43,7 +46,9 @@ y = data.loc[:,target].values
 data_t = pd.read_csv('test.csv')
 data_t.rename(columns=col_names,inplace=True)
 data_t['months_donated'] = data_t['months_since_first'] - data_t['months_since_last']
-#data_t['per_moth'] = data_t['total_volume'] / data_t['months_donated']
+data_t['per_moth'] = data_t['total_volume']
+for i in range(len(data_t['total_volume'])):
+    data_t['per_moth'][i] = data_t['total_volume'][i] / data_t['months_donated'][i] if data_t['months_donated'][i] != 0 else 0.0
 X_T = data_t.loc[:,features].values
 X_index = data_t.loc[:,'id'].values
 
@@ -68,7 +73,10 @@ model.add(Dense(output_dim=512,input_dim=X_train.shape[1] , init='uniform'))
 model.add(Activation("relu"))
 model.add(Dropout(0.02))
 model.add(Dense(output_dim=1024,  init="lecun_uniform"))
-model.add(Activation("relu"))
+model.add(Activation("sigmoid"))
+model.add(Dropout(0.07))
+model.add(Dense(output_dim=1024,  init="lecun_uniform"))
+model.add(Activation("sigmoid"))
 model.add(Dropout(0.07))
 model.add(Dense(output_dim=512,  init="lecun_uniform"))
 model.add(Activation("relu"))
@@ -79,8 +87,8 @@ model.add(Activation("sigmoid"))
 model.compile(loss=losses.binary_crossentropy,optimizer='rmsprop', metrics=['accuracy'])
 model.summary()
 
-model.fit(X_train, y_train,  epochs=30,
-          batch_size=16, verbose=2,validation_split=0.2,callbacks=[checkpointer])
+model.fit(X_train, y_train,  epochs=50,
+          batch_size=16, verbose=2,validation_split=0.25,callbacks=[checkpointer])
 
 model.load_weights('weights.best.hdf5')
 proba = model.predict_proba(X_test)
