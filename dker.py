@@ -87,7 +87,7 @@ model.add(Activation("sigmoid"))
 model.compile(loss=losses.binary_crossentropy,optimizer='rmsprop', metrics=['accuracy'])
 model.summary()
 
-model.fit(X_train, y_train,  epochs=50,
+model.fit(X_train, y_train,  epochs=250,
           batch_size=16, verbose=2,validation_split=0.25,callbacks=[checkpointer])
 
 model.load_weights('weights.best.hdf5')
